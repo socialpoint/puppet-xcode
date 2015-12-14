@@ -59,7 +59,7 @@ If the value of 'accept_eula' is not 'accept', then the EULA will be left as is.
 
 ## Reference
 
-A new facter 'xcode_versions' will list an array of hash that contain the installed Xcode versions. The hash is in the form of: `{build: <number>, version: <string>`
+A new facter 'xcode_versions' will list an array of hash that contain the installed Xcode versions. The hash is in the form of: `{build: <number>, version: <string>}`
 
 For example:
 ```
