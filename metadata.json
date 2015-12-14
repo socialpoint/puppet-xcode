@@ -1,20 +1,47 @@
 {
   "name": "mdelaney-xcode",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Mike Delaney",
   "summary": "Install Xcode",
   "license": "BSD-2-Clause",
   "source": "https://github.com/madelaney/puppet-xcode",
   "project_page": "https://github.com/madelaney/puppet-xcode",
   "issues_url": "https://github.com/madelaney/puppet-xcode/issues",
+  "tags": [
+    "xcode",
+    "mac",
+    "osx",
+    "macintosh"
+  ],
   "dependencies": [
     {
-      "name":"puppetlabs-stdlib",
+      "name":"puppetlabs/stdlib",
       "version_requirement":">= 1.0.0"
     },
     {
       "name": "nanliu/staging",
       "version_requirement": ">=1.0.3"
+    }
+  ],
+ "operatingsystem_support": [
+    {
+       "operatingsystem": "Darwin",
+       "operatingsystemrelease": [
+        "10.8",
+        "10.9",
+        "10.10",
+        "10.11"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "pe",
+      "version_requirement": ">=3.8.3 <4.0.0"
+    },
+    {
+      "name": "puppet",
+      "version_requirement": ">=3.8.3 <4.0.0"
     }
   ]
 }
