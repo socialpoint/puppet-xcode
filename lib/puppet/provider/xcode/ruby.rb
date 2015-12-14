@@ -9,12 +9,9 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   attr_reader :manifest
 
   def self.extract_version(source)
-    return @version unless @version.nil?
-
     metadata = /.*(Xcode_([0-9\.?]+){1,})\.dmg/.match source
-    @version = metadata[2]
-
-    @version
+    version = metadata[2]
+    version
   end
 
   def self.install_dir(resource)
@@ -145,10 +142,9 @@ Puppet::Type.type(:xcode).provide(:ruby) do
           install_dir = manifest['install_dir']
           FileUtils.rm_rf install_dir if File.exist? install_dir
         end
+
+        FileUtils.rm_rf install_manifest
       end
-
-      FileUtils.rm_rf install_manifest
-
     rescue StandardError => e
       Puppet.debug e.message
       Puppet.debug e.backtrace
@@ -164,11 +160,8 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def install_manifest
-    return @manifest unless @manifest.nil?
-
     version = self.class.extract_version @resource[:source]
-    @manifest = format('/var/db/.xcode-v%s', version)
-
-    @manifest
+    manifest = format('/var/db/.xcode-v%s', version)
+    manifest
   end
 end
