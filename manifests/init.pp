@@ -62,6 +62,6 @@ class xcode (
   validate_hash($instances)
 
   if $instances != {} {
-    create_resources('xcode::instances', $instances)
+    create_resources('xcode::instance', $instances)
   }
 }
