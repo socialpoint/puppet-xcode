@@ -50,7 +50,11 @@ define xcode::instance(
   $cache_installer = $::xcode::cache_installers,
   $timeout = $::xcode::timeout
   ) {
-  require xcode
+
+  # The base class must be included first because it is used by parameter defaults
+  if ! defined(Class['xcode']) {
+    fail('You must include the xcode base class before trying to install any instances')
+  }
 
   validate_bool($cache_installer)
 
