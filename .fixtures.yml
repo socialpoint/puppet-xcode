@@ -1,0 +1,7 @@
+fixtures:
+  forge_modules:
+    stdlib: 'puppetlabs/stdlib'
+    staging: 'nanliu/staging'
+  symlinks:
+    xcode: "#{source_dir}"
+
