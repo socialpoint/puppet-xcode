@@ -10,9 +10,9 @@
 #
 # [*ensure*]
 #
-# [*accept_eula*]
+# [*accept*]
 #   If set to 'accept', the EULA to Xcode is accepted upon
-#   installation
+#   installation, or ignore it.
 #
 # [*cache_installer*]
 #   Keep a local cached copy of the Xcode DMG on the File
@@ -46,7 +46,7 @@
 define xcode::instance(
   $source_url,
   $ensure = present,
-  $accept_eula = 'no',
+  $accept = 'ignore',
   $cache_installer = $::xcode::cache_installers,
   $timeout = $::xcode::timeout
   ) {
@@ -99,6 +99,7 @@ define xcode::instance(
   xcode {
     $dmg:
       ensure      => $ensure,
-      source      => $_real_installer;
+      source      => $_real_installer,
+      accept_eula => $accept_eula;
   }
 }

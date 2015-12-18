@@ -19,9 +19,6 @@ Facter.add(:xcode_versions) do
         versions << buildversion
       end
     end
-
-    Puppet.debug versions
-
     versions
   end
 end

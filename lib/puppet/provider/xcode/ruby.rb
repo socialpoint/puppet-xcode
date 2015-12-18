@@ -48,13 +48,13 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       t.print "name: #{name}\n"
       t.print "source: #{orig_source}\n"
       t.print "install_dir: #{install_dir}\n"
-      t.print "accept_eula: #{accept_eula}\n"
+      t.print "eula: #{accept_eula}\n"
     end
 
     accepteula install_dir if accept_eula == 'accept'
   end
 
-  def self.installpkgdmg(source, name, version, install_path, accept_eula)
+  def self.installpkgdmg(source, name, version, accept_eula, install_path = nil)
     require 'open-uri'
     require 'facter/util/plist'
 
@@ -87,7 +87,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
                 f =~ /Xcode\.app$/i
               }.each do |pkg|
                 found_app = true
-                installapp("#{fspath}/#{pkg}", name, source, version, install_path, accept_eula)
+                installapp("#{fspath}/#{pkg}", name, source, version, accept_eula, install_path)
               end
             end
             Puppet.debug "Unable to find .app in .appdmg. #{name} will not be installed." if !found_app
@@ -107,7 +107,6 @@ Puppet::Type.type(:xcode).provide(:ruby) do
 
   def create
     version = self.class.extract_version @resource[:source]
-    notice("Creating: #{resource[:name]} v#{version}")
   end
 
   def query
@@ -117,14 +116,12 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   def install
     version = self.class.extract_version @resource[:source]
 
-    notice("Installing: Xcode@#{version}")
-    fail "Mac OS X PKG DMG's must specify a package source." if @resource[:source].nil?
-    fail "Mac OS X PKG DMG's must specify a package name." if @resource[:name].nil?
+    fail "Xcode PKG DMG's must specify a package source." if @resource[:source].nil?
+    fail "Xcode PKG DMG's must specify a package name." if @resource[:name].nil?
 
     begin
       install_path = self.class.install_dir @resource
-      self.class.installpkgdmg(@resource[:source], @resource[:name], version, install_path, @resource[:accept_eula])
-
+      self.class.installpkgdmg(@resource[:source], @resource[:name], version, @resource[:eula], install_path)
     rescue StandardError => e
       Puppet.debug e.message
       Puppet.debug e.backtrace
@@ -154,7 +151,6 @@ Puppet::Type.type(:xcode).provide(:ruby) do
 
   def exists?
     manifest = install_manifest
-    notice("Checking for existence of: #{resource[:name]}")
     Puppet.debug format('Install Manifest: %s', install_manifest)
     Puppet::FileSystem.exist? manifest
   end

@@ -21,12 +21,10 @@ Puppet::Type.newtype(:xcode) do
     desc 'Override the default value of /Application/Xcode-v{version}.app'
   end
 
-  newparam(:accept_eula) do
-    validate do |value|
-      unless /(no|accept)/.match value
-        raise ArgumentError, "The argument 'accept_eula' must be accept, or no"
-      end
-    end
+  newparam(:eula) do
+    desc 'What should we do about the EULA for Xcode'
+    newvalues(:accept, :ignore, :no)
+    defaultto 'ignore'
   end
 
   ensurable do
