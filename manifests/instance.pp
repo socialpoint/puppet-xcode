@@ -46,7 +46,7 @@
 define xcode::instance(
   $source_url,
   $ensure = present,
-  $accept = 'ignore',
+  $accept_eula = 'ignore',
   $cache_installer = $::xcode::cache_installers,
   $timeout = $::xcode::timeout
   ) {
