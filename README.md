@@ -53,9 +53,9 @@ xcode::instance {
 }
 ```
 
-By default, this module will *not* accept the EULA for Xcode. However, if you pass in the parameter 'accept_eula' as 'accept', we will accept the EULA for Xcode requiring no manual intervention.
+By default, this module will *not* accept the EULA for Xcode. However, if you pass in the parameter 'eula' as 'accept', we will accept the EULA for Xcode requiring no manual intervention.
 
-If the value of 'accept_eula' is not 'accept', then the EULA will be left as is.
+If the value of 'eula' is not 'accept', then the EULA will be left as is.
 
 ## Reference
 

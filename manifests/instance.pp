@@ -46,7 +46,7 @@
 define xcode::instance(
   $source_url,
   $ensure = present,
-  $accept_eula = 'ignore',
+  $eula = 'ignore',
   $cache_installer = $::xcode::cache_installers,
   $timeout = $::xcode::timeout
   ) {
@@ -98,8 +98,8 @@ define xcode::instance(
 
   xcode {
     $dmg:
-      ensure      => $ensure,
-      source      => $_real_installer,
-      accept_eula => $accept_eula;
+      ensure  => $ensure,
+      source  => $_real_installer,
+      eula    => $eula;
   }
 }

@@ -7,26 +7,21 @@
   "source": "https://github.com/madelaney/puppet-xcode",
   "project_page": "https://github.com/madelaney/puppet-xcode",
   "issues_url": "https://github.com/madelaney/puppet-xcode/issues",
+  "dependencies": [
+    {"name":"puppetlabs/stdlib","version_requirement":">= 1.0.0"},
+    {"name":"nanliu/staging","version_requirement":">=1.0.3"}
+  ],
+  "data_provider": null,
   "tags": [
     "xcode",
     "mac",
     "osx",
     "macintosh"
   ],
-  "dependencies": [
+  "operatingsystem_support": [
     {
-      "name":"puppetlabs/stdlib",
-      "version_requirement":">= 1.0.0"
-    },
-    {
-      "name": "nanliu/staging",
-      "version_requirement": ">=1.0.3"
-    }
-  ],
- "operatingsystem_support": [
-    {
-       "operatingsystem": "Darwin",
-       "operatingsystemrelease": [
+      "operatingsystem": "Darwin",
+      "operatingsystemrelease": [
         "10.8",
         "10.9",
         "10.10",

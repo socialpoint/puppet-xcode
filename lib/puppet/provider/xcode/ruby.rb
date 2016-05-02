@@ -34,7 +34,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     end
   end
 
-  def self.installapp(source, name, orig_source, version, accept_eula, install_dir = nil)
+  def self.installapp(source, name, orig_source, version, eula, install_dir = nil)
     appname = format('Xcode-v%s', version)
 
     if install_dir.nil?
@@ -48,13 +48,13 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       t.print "name: #{name}\n"
       t.print "source: #{orig_source}\n"
       t.print "install_dir: #{install_dir}\n"
-      t.print "eula: #{accept_eula}\n"
+      t.print "eula: #{eula}\n"
     end
 
-    accepteula install_dir if accept_eula == 'accept'
+    accepteula install_dir if eula == 'accept'
   end
 
-  def self.installpkgdmg(source, name, version, accept_eula, install_path = nil)
+  def self.installpkgdmg(source, name, version, eula, install_path = nil)
     require 'open-uri'
     require 'facter/util/plist'
 
@@ -87,7 +87,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
                 f =~ /Xcode\.app$/i
               }.each do |pkg|
                 found_app = true
-                installapp("#{fspath}/#{pkg}", name, source, version, accept_eula, install_path)
+                installapp("#{fspath}/#{pkg}", name, source, version, eula, install_path)
               end
             end
             Puppet.debug "Unable to find .app in .appdmg. #{name} will not be installed." if !found_app
