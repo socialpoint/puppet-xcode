@@ -29,10 +29,10 @@
 #
 # xcode::instance {
 #   'Xcode 6.1.1':
-#     source_url => 'http://intranet.com/squid/xcode/Xcode_6.1.1.dmg';
+#     source_url => 'http://intranet.com/squid/xcode/Xcode_6.1.1.dmg',
 #
 #   'Xcode 7.2':
-#     source_url => 'http://intranet.com/squid/xcode/Xcode_7.2.dmg';
+#     source_url => 'http://intranet.com/squid/xcode/Xcode_7.2.dmg',
 # }
 #
 # === Authors
@@ -48,7 +48,8 @@ define xcode::instance(
   $ensure = present,
   $eula = 'ignore',
   $cache_installer = $::xcode::cache_installers,
-  $timeout = $::xcode::timeout
+  $timeout = $::xcode::timeout,
+  $selected = 'yes'
   ) {
 
   # The base class must be included first because it is used by parameter defaults
@@ -74,7 +75,7 @@ define xcode::instance(
     if !defined(File['/opt']) {
       file {
         '/opt':
-          ensure => directory;
+          ensure => directory,
       }
     }
 
@@ -85,7 +86,7 @@ define xcode::instance(
           require   => File['/opt'],
           timeout   => $timeout,
           username  => $::xcode::username,
-          password  => $::xcode::password;
+          password  => $::xcode::password,
       }
       $_real_installer = "/opt/staging/xcode/${dmg}"
     }
@@ -98,8 +99,9 @@ define xcode::instance(
 
   xcode {
     $dmg:
-      ensure  => $ensure,
-      source  => $_real_installer,
-      eula    => $eula;
+      ensure   => $ensure,
+      source   => $_real_installer,
+      eula     => $eula,
+      selected => $selected,
   }
 }

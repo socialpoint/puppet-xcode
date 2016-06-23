@@ -49,13 +49,36 @@ include xcode
 xcode::instance {
     'Xcode v7.1.1':
         ensure      => present,
-        source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg';
+        source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
 }
 ```
 
 By default, this module will *not* accept the EULA for Xcode. However, if you pass in the parameter 'eula' as 'accept', we will accept the EULA for Xcode requiring no manual intervention.
 
 If the value of 'eula' is not 'accept', then the EULA will be left as is.
+
+```
+include xcode
+
+xcode::instance {
+  'Xcode v7.1.1':
+    ensure      => present,
+    source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
+    eula        => 'accept',
+}
+```
+
+By default, this module will 'xcode-select' the newly installed Xcode. If you do not want this to happen set the parameter 'selected' to 'no'.
+
+```
+include xcode
+
+xcode::instance {
+  'Xcode v7.1.1':
+    ensure      => present,
+    source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
+    selected    => 'no',
+}
 
 ## Reference
 

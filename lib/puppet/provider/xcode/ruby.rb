@@ -24,6 +24,16 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     path
   end
 
+  def self.xcselect(install_path)
+    path = format('%s/Contents/Developer', install_path)
+    xcodeselect = format('/usr/bin/xcode-select -s %s', path)
+    Puppet.debug xcodeselect
+    Open3.popen3(xcodeselect.chomp, :chdir => path) do | i, o, e, t|
+      e.each { |err| puts err }
+      o.each { |out| puts out }
+    end
+  end
+
   def self.accepteula(install_path)
     path = format('%s/Contents/Developer/usr/bin', install_path)
     xcodebuild = format('%s/xcodebuild -license accept', path)
@@ -34,7 +44,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     end
   end
 
-  def self.installapp(source, name, orig_source, version, eula, install_dir = nil)
+  def self.installapp(source, name, orig_source, version, eula, selected, install_dir = nil)
     appname = format('Xcode-v%s', version)
 
     if install_dir.nil?
@@ -49,14 +59,22 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       t.print "source: #{orig_source}\n"
       t.print "install_dir: #{install_dir}\n"
       t.print "eula: #{eula}\n"
+      t.print "selected: #{selected}\n"
     end
 
-    accepteula install_dir if eula == 'accept'
+    if (!eula.casecmp "accept")
+      Puppet.debug "Accepting EULA"
+      accepteula install_dir
+    end
+
+    if (!selected.casecmp "yes")
+      Puppet.debug "Selecting Xcode"
+      xcselect install_dir
+    end
   end
 
-  def self.installpkgdmg(source, name, version, eula, install_path = nil)
+  def self.installpkgdmg(source, name, version, eula, selected, install_path = nil)
     require 'open-uri'
-    require 'facter/util/plist'
 
     cached_source = source
     tmpdir = Dir.mktmpdir
@@ -73,21 +91,21 @@ Puppet::Type.type(:xcode).provide(:ruby) do
         end
       end
 
+      mount_point = Dir.mktmpdir
       open(cached_source) do |dmg|
-        xml_str = hdiutil 'mount', '-plist', '-nobrowse', '-readonly', '-mountrandom', '/tmp', dmg.path
-          ptable = Plist::parse_xml xml_str
-          # JJM Filter out all mount-paths into a single array, discard the rest.
-          mounts = ptable['system-entities'].collect { |entity|
-            entity['mount-point']
-          }.select { |mountloc|; mountloc }
-          begin
+        xml_str = hdiutil 'mount', '-nobrowse', '-readonly', '-mountpoint', mount_point, dmg.path
+
+        mounts = [ mount_point ]
+
+        begin
             found_app = false
             mounts.each do |fspath|
+            Puppet.debug "trying [#{fspath}]."
               Dir.entries(fspath).select { |f|
                 f =~ /Xcode\.app$/i
               }.each do |pkg|
                 found_app = true
-                installapp("#{fspath}/#{pkg}", name, source, version, eula, install_path)
+                installapp("#{fspath}/#{pkg}", name, source, version, eula, selected, install_path)
               end
             end
             Puppet.debug "Unable to find .app in .appdmg. #{name} will not be installed." if !found_app
@@ -101,6 +119,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
 
     ensure
       FileUtils.remove_entry_secure(tmpdir, true)
+      FileUtils.remove_entry_secure(mount_point, true)
 
     end
   end
@@ -121,7 +140,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
 
     begin
       install_path = self.class.install_dir @resource
-      self.class.installpkgdmg(@resource[:source], @resource[:name], version, @resource[:eula], install_path)
+      self.class.installpkgdmg(@resource[:source], @resource[:name], version, @resource[:eula], @resource[:selected], install_path)
     rescue StandardError => e
       Puppet.debug e.message
       Puppet.debug e.backtrace
@@ -161,3 +180,4 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     manifest
   end
 end
+

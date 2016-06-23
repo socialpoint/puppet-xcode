@@ -30,6 +30,12 @@
 # [*instances*]
 #   An array of hashes that can be passed into 'xcode::instances'
 #
+# [*eula*]
+#   Automatically accept the EULA
+#
+# [*selected*]
+#   Run 'xcode-select' on the newly installed Xcode
+#
 # === Variables
 #
 # Here you should define a list of variables that this module would require.
@@ -38,7 +44,7 @@
 #
 # class {
 #   '::xcode':
-#     source_url => 'http://intranet.com/squid/xcode';
+#     source_url => 'http://intranet.com/squid/xcode',
 # }
 #
 # === Authors
@@ -56,6 +62,8 @@ class xcode (
   $password = $::xcode::params::password,
   $cache_installers = $::xcode::params::cache_installers,
   $timeout = $::xcode::params::timeout,
+  $eula = $::xcode::params::eula,
+  $selected = $::xcode::params::selected,
   $instances = {}
   ) inherits ::xcode::params {
 

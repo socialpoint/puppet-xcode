@@ -5,4 +5,6 @@ class xcode::params {
   $password = undef
   $cache_installers = false
   $timeout = 900
+  $eula = 'ignore'
+  $selected = 'yes'
 }
