@@ -27,6 +27,12 @@ Puppet::Type.newtype(:xcode) do
     defaultto 'ignore'
   end
 
+  newparam(:selected) do
+    desc 'Should we xcode-select this version of XCode'
+    newvalues(:yes, :no)
+    defaultto 'yes'
+  end
+
   ensurable do
     desc 'What state the package should be in'
     defaultto :present
@@ -40,3 +46,4 @@ Puppet::Type.newtype(:xcode) do
     end
   end
 end
+
