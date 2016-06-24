@@ -106,6 +106,13 @@ know what the ground rules for contributing are.
 
 ## Release Notes
 
+## Version 0.1.0
+
+* Minor bug fixes
+* Support for Puppet 4.x
+
+(Thanks to @steveames for the changes)
+
 ## Version 0.0.1
 
 This is the initial release
