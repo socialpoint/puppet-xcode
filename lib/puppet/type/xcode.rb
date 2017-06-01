@@ -46,4 +46,3 @@ Puppet::Type.newtype(:xcode) do
     end
   end
 end
-
