@@ -11,10 +11,10 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   attr_reader :manifest
 
   def self.extract_version(source)
-    if source.ends_with '.dmg'
+    if source.end_with? '.dmg'
       metadata = /.*(Xcode_([0-9\.?]+){1,})\.dmg/.match source
       version = metadata[2]
-    elsif source.ends_with '.xip'
+    elsif source.end_with? '.xip'
       metadata = /.*(Xcode_?([0-9\.?]+){1,})\.xip/.match source
       version = metadata[2]
     end
