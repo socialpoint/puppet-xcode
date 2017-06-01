@@ -149,7 +149,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def create
-    #version = self.class.extract_version @resource[:source]
+    version = self.class.extract_version @resource[:source]
   end
 
   def query
