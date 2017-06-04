@@ -15,6 +15,11 @@ Puppet::Type.newtype(:xcode) do
 
   newparam(:source) do
     desc 'Where to find the package file'
+    validate do |value|
+      if !value.is_a?(String)
+        raise ArgumentError, "Source must be a String not #{value.class}"
+      end
+    end
   end
 
   newparam(:install_path) do
@@ -31,6 +36,14 @@ Puppet::Type.newtype(:xcode) do
     desc 'Should we xcode-select this version of XCode'
     newvalues(:yes, :no)
     defaultto 'yes'
+  end
+
+  newparam(:checksum) do
+    desc 'File checksum type'
+  end
+
+  newparam(:checksum_type) do
+    desc 'File checksum value'
   end
 
   ensurable do

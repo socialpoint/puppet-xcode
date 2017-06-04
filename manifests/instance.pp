@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*source_url*]
+# [*source*]
 #   The URL to fetch the DMG from. This can be HTTP, HTTPS, or
 #   file system.
 #
@@ -14,12 +14,16 @@
 #   If set to 'accept', the EULA to Xcode is accepted upon
 #   installation, or ignore it.
 #
-# [*cache_installer*]
-#   Keep a local cached copy of the Xcode DMG on the File
-#   System.
-#
 # [*timeout*]
 #   The timeout when downloading the Xcode dmg.
+#
+# [*auth_username*]
+#   Username to authenticate against *source* with,
+#   if necessary.
+#
+# [*auth_password*]
+#   Password to authenticate against *source* with,
+#   if necessary.
 #
 # === Variables
 #
@@ -29,10 +33,10 @@
 #
 # xcode::instance {
 #   'Xcode 6.1.1':
-#     source_url => 'http://intranet.com/squid/xcode/Xcode_6.1.1.dmg',
+#     source => 'http://intranet.com/squid/xcode/Xcode_6.1.1.dmg',
 #
 #   'Xcode 7.2':
-#     source_url => 'http://intranet.com/squid/xcode/Xcode_7.2.dmg',
+#     source => 'http://intranet.com/squid/xcode/Xcode_7.2.dmg',
 # }
 #
 # === Authors
@@ -44,20 +48,23 @@
 # Copyright 2015 Mike Delaney, unless otherwise noted.
 #
 define xcode::instance(
-  $source_url,
-  $ensure = present,
-  $eula = 'ignore',
-  $cache_installer = $::xcode::cache_installers,
-  $timeout = $::xcode::timeout,
-  $selected = 'yes'
-  ) {
+  $source,
+  $ensure        = present,
+  $eula          = 'ignore',
+  $selected      = 'no',
+  $username      = $::xcode::username,
+  $password      = $::xcode::password,
+  $checksum      = undef,
+  $checksum_type = undef,
+) {
 
   # The base class must be included first because it is used by parameter defaults
   if ! defined(Class['xcode']) {
     fail('You must include the xcode base class before trying to install any instances')
   }
 
-  validate_bool($cache_installer)
+  validate_legacy(String, "validate_string", $source)
+  validate_legacy(String, "validate_string", $selected)
 
   if $ensure == 'absent' {
     $_real_file_ensure = absent
@@ -68,40 +75,50 @@ define xcode::instance(
     $_real_package_ensure = present
   }
 
-  $parts = split($source_url, '/')
+  $parts = split($source, '/')
   $dmg = $parts[-1]
-
-  if $cache_installer {
-    if !defined(File['/opt']) {
-      file {
-        '/opt':
-          ensure => directory,
-      }
-    }
-
-    if $source_url =~ /^http/ {
-      staging::file {
-        $dmg:
-          source    => $source_url,
-          require   => File['/opt'],
-          timeout   => $timeout,
-          username  => $::xcode::username,
-          password  => $::xcode::password,
-      }
-      $_real_installer = "/opt/staging/xcode/${dmg}"
-    }
-
-  }
-  else {
-    $_real_installer = $source_url
-
-  }
 
   xcode {
     $dmg:
-      ensure   => $ensure,
-      source   => $_real_installer,
-      eula     => $eula,
-      selected => $selected,
+      ensure        => $ensure,
+      eula          => $eula,
+      selected      => $selected,
+      checksum      => $checksum,
+      checksum_type => $checksum_type;
+  }
+
+    if !defined(File['/opt']) {
+      file {
+        '/opt':
+          ensure => directory;
+      }
+    }
+
+  if $source =~ /^http/ {
+    archive {
+      $dmg:
+        ensure        => $ensure,
+        path          => "/opt/${dmg}",
+        source        => $source,
+        username      => $username,
+        password      => $password,
+        provider      => ruby,
+        checksum      => $checksum,
+        checksum_type => $checksum_type,
+        require       => File['/opt'];
+    }
+
+    Xcode[$dmg] {
+      require => Archive[$dmg]
+    }
+
+    $_real_installer = "/opt/${dmg}"
+  }
+  else {
+    $_real_installer = $source
+  }
+
+  Xcode[$dmg] {
+    source => $_real_installer
   }
 }
