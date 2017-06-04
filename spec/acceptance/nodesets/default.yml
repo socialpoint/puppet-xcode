@@ -1,0 +1,14 @@
+# This file is managed centrally by modulesync
+#   https://github.com/maestrodev/puppet-modulesync
+HOSTS:
+  vagrant-box-osx:
+    roles:
+      - agents
+      - frictionless
+    platform: osx-10.12.5-x86_64
+    box: 'macos/sierra'
+    hypervisor: vagrant
+    vb_gui: true
+CONFIG:
+  log_level: verbose
+  type: foss

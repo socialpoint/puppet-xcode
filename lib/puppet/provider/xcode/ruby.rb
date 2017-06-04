@@ -7,8 +7,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   commands :ditto   => '/usr/bin/ditto'
   commands :xiputil => '/System/Library/CoreServices/Applications/Archive Utility.app/Contents/MacOS/Archive Utility'
 
-  attr_reader :version
-  attr_reader :manifest
+  MANIFEST_DIR = '/var/db'.freeze
 
   def self.extract_version(source)
     if source.end_with? '.dmg'
@@ -18,7 +17,6 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       metadata = /.*(Xcode_?([0-9\.?]+){1,})\.xip/.match source
       version = metadata[2]
     end
-
     version
   end
 
@@ -53,9 +51,9 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def self.save_metadata(name, opts)
-    Puppet.debug "/var/db/.#{name.downcase}"
-    File.open("/var/db/.#{name.downcase}", 'w') do |t|
-      opts.each { |k, v| t.print format('%s: %s', k, v) }
+    Puppet.debug "Writing manifest: #{name}"
+    File.open(name, 'w') do |t|
+      opts.each { |k, v| t.write format("%s: %s\n", k, v) }
     end
   end
 
@@ -63,25 +61,12 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     ditto '--rsrc', source, install_path
   end
 
-  def self.install_xcode(source, name, version, eula, selected, install_dir)
-    require 'open-uri'
-
+  def self.install_xcode(source, name, version, install_dir, opts = {})
     cached_source = source
     tmpdir = Dir.mktmpdir
 
-    if %r{\A[A-Za-z][A-Za-z0-9+\-\.]*://} =~ cached_source
-      cached_source = File.join(tmpdir, name)
-      begin
-        curl '-o', cached_source, '-C', '-', '-L', '-s', '--url', source
-        Puppet.debug "Success: curl transferred [#{name}]"
-      rescue Puppet::ExecutionFailure
-        Puppet.debug "curl did not transfer [#{name}].  Falling back to slower open-uri transfer methods."
-        cached_source = source
-      end
-    end
-
-    if source.ends_with? '.xip'
-      installxip cached_source, name, install_dir
+    if source.end_with? '.xip'
+      installxip cached_source, install_dir
     else
       installpkgdmg cached_source, name, install_dir
     end
@@ -89,27 +74,27 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     meta_data = {
       name: name,
       version: version,
-      source: orig_source,
-      install_dir: install_dir,
-      eula: eula,
-      selected: selected
-    }
-    save_metadata(appname, meta_data)
+      source: source,
+      install_dir: install_dir
+    }.merge(opts)
 
-    if eula.casecmp 'accept'
+    if opts[:eula].casecmp 'accept'
       Puppet.debug 'Accepting EULA'
       accepteula install_dir
     end
 
-    if selected.casecmp 'yes'
+    if opts[:selected].casecmp 'yes'
       Puppet.debug 'Selecting Xcode'
       xcselect install_dir
     end
+
+    save_metadata(opts[:manifest], meta_data)
   end
 
   def self.installxip(source, install_dir)
     xiputil source
-    move '${HOME}/Downloads/Xcode.app', install_dir
+    extract_dir = File.dirname(source)
+    move "#{extract_dir}/Xcode.app", install_dir
   end
 
   def self.installpkgdmg(source, name, install_dir)
@@ -133,7 +118,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
               f =~ /Xcode\.app$/i
             }.each do |pkg|
               found_app = true
-              installapp("#{fspath}/#{pkg}", name, source, install_dir)
+              installapp("#{fspath}/#{pkg}", install_dir)
             end
           end
           Puppet.debug "Unable to find .app in .appdmg. #{name} will not be installed." unless found_app
@@ -157,19 +142,27 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def install
-    version = self.class.extract_version @resource[:source]
-
     raise "Xcode PKG DMG's must specify a package source." if @resource[:source].nil?
     raise "Xcode PKG DMG's must specify a package name." if @resource[:name].nil?
 
+    version = self.class.extract_version @resource[:source]
+
     begin
       install_dir = self.class.install_dir @resource
+      opts = {
+        manifest: install_manifest,
+        eula: @resource[:eula],
+        selected: @resource[:selected],
+        checksum: @resource[:checksum],
+        checksum_type: @resource[:checksum_type]
+      }
+
       self.class.install_xcode(@resource[:source],
                                @resource[:name],
                                version,
-                               @resource[:eula],
-                               @resource[:selected],
-                               install_dir)
+                               install_dir,
+                               opts)
+
     rescue StandardError => e
       Puppet.debug e.message
       Puppet.debug e.backtrace
@@ -202,8 +195,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def install_manifest
-    version = self.class.extract_version @resource[:source]
-    manifest = format('/var/db/.xcode-v%s', version)
-    manifest
+    filename = format('.%s', File.basename(@resource[:source]))
+    [MANIFEST_DIR, filename].join File::SEPARATOR
   end
 end

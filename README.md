@@ -48,8 +48,8 @@ include xcode
 
 xcode::instance {
     'Xcode v7.1.1':
-        ensure      => present,
-        source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
+        ensure => present,
+        source => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
 }
 ```
 
@@ -62,9 +62,9 @@ include xcode
 
 xcode::instance {
   'Xcode v7.1.1':
-    ensure      => present,
-    source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
-    eula        => 'accept',
+    ensure => present,
+    source => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
+    eula   => 'accept',
 }
 ```
 
@@ -75,9 +75,9 @@ include xcode
 
 xcode::instance {
   'Xcode v7.1.1':
-    ensure      => present,
-    source_url  => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
-    selected    => 'no',
+    ensure   => present,
+    source   => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
+    selected => 'no',
 }
 
 ## Reference
@@ -112,6 +112,15 @@ know what the ground rules for contributing are.
 * Support for Puppet 4.x
 
 (Thanks to @steveames for the changes)
+
+## Version 1.0.0
+
+```Important Changes
+* xcode::instance param 'source_url' renamed to 'source'
+* xcode::instance param 'selected' defaulted to 'no'
+```
+
+* Version matcher/extractor updated to match Xcode package published by Apple
 
 ## Version 0.0.1
 

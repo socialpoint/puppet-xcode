@@ -4,7 +4,7 @@
 #
 # === Parameters
 #
-# [*source_url*]
+# [*source*]
 #   The URL to fetch the DMG from. This can be HTTP, HTTPS, or
 #   file system.
 #
@@ -12,17 +12,13 @@
 #   The directory to install Xcode into, defaults
 #   to '/Applications'.
 #
-# [*username*]
-#   Username to authenticate against *source_url* with,
+# [*auth_username*]
+#   Username to authenticate against *source* with,
 #   if necessary.
 #
-# [*password*]
-#   Password to authenticate against *source_url* with,
+# [*auth_password*]
+#   Password to authenticate against *source* with,
 #   if necessary.
-#
-# [*cache_installers*]
-#   Keep a local cached copy of the Xcode DMG on the File
-#   System.
 #
 # [*timeout*]
 #   The default timeout when downloading the Xcode dmg.
@@ -44,7 +40,7 @@
 #
 # class {
 #   '::xcode':
-#     source_url => 'http://intranet.com/squid/xcode',
+#     source => 'http://intranet.com/squid/xcode',
 # }
 #
 # === Authors
@@ -56,18 +52,18 @@
 # Copyright 2015 Mike Delaney, unless otherwise noted.
 #
 class xcode (
-  $source_url = $::xcode::params::source_url,
+  $source = $::xcode::params::source,
   $install_dir = $::xcode::params::install_dir,
   $username = $::xcode::params::username,
   $password = $::xcode::params::password,
-  $cache_installers = $::xcode::params::cache_installers,
   $timeout = $::xcode::params::timeout,
   $eula = $::xcode::params::eula,
   $selected = $::xcode::params::selected,
   $instances = {}
   ) inherits ::xcode::params {
 
-  validate_hash($instances)
+  #validate_hash($instances)
+  validate_legacy(Hash, 'validate_hash', $instances)
 
   if $instances != {} {
     create_resources('xcode::instance', $instances)
