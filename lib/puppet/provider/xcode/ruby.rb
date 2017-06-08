@@ -24,7 +24,16 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     root = resource[:install_path] ? resource[:install_path] : '/Applications'
     version = extract_version resource[:source]
 
-    bundle = format('Xcode-v%s.app', version)
+    if resource[:source].end_with? '_beta.xip'
+      beta = true
+      m = /.*(Xcode_?([0-9\.?]+){1,})(_(beta[0-9]))?\.xip/.match resource[:source]
+      suffix = m[4]
+
+      bundle = format('Xcode-v%s-%s.app', version, suffix)
+    else
+      bundle = format('Xcode-v%s.app', version)
+    end
+
     path = File.join(root, bundle)
 
     path
@@ -94,7 +103,12 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   def self.installxip(source, install_dir)
     xiputil source
     extract_dir = File.dirname(source)
-    move "#{extract_dir}/Xcode.app", install_dir
+
+    if Dir.exist? "#{extract_dir}/Xcode-beta.app"
+      move "#{extract_dir}/Xcode-beta.app", install_dir
+    else
+      move "#{extract_dir}/Xcode.app", install_dir
+    end
   end
 
   def self.installpkgdmg(source, name, install_dir)
