@@ -14,8 +14,9 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       metadata = /.*(Xcode_([0-9\.?]+){1,})\.dmg/.match source
       version = metadata[2]
     elsif source.end_with? '.xip'
-      metadata = /.*(Xcode_?([0-9\.?]+){1,})\.xip/.match source
+      metadata = /.*(Xcode_?([0-9\.?]+){1,})(_(beta[0-9]?))?\.xip/.match source
       version = metadata[2]
+      version = format('%s-%s', version, metadata[4]) unless metadata[4].nil?
     end
     version
   end
@@ -24,16 +25,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     root = resource[:install_path] ? resource[:install_path] : '/Applications'
     version = extract_version resource[:source]
 
-    if resource[:source].end_with? '_beta.xip'
-      beta = true
-      m = /.*(Xcode_?([0-9\.?]+){1,})(_(beta[0-9]?))?\.xip/.match resource[:source]
-      suffix = m[4]
-
-      bundle = format('Xcode-v%s-%s.app', version, suffix)
-    else
-      bundle = format('Xcode-v%s.app', version)
-    end
-
+    bundle = format('Xcode-v%s.app', version)
     path = File.join(root, bundle)
 
     path
