@@ -26,7 +26,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
 
     if resource[:source].end_with? '_beta.xip'
       beta = true
-      m = /.*(Xcode_?([0-9\.?]+){1,})(_(beta[0-9]))?\.xip/.match resource[:source]
+      m = /.*(Xcode_?([0-9\.?]+){1,})(_(beta[0-9]?))?\.xip/.match resource[:source]
       suffix = m[4]
 
       bundle = format('Xcode-v%s-%s.app', version, suffix)
