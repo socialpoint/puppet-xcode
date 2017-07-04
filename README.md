@@ -111,6 +111,7 @@ know what the ground rules for contributing are.
 ### Version 1.0.2
 
 * Fixed Changelog
+* Fixed Puppet module ignore file list
 
 ### Version 1.0.1
 
