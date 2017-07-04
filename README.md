@@ -31,7 +31,7 @@ management, etc.) this is the time to mention it.
 
 ### What xcode affects
 
-This module will help install Xcode by source (dmg) into your Mac OS X Applications directory
+This module will help install Xcode by source (dmg, or xip) into your Mac OS X Applications directory
 
 ### Setup Requirements
 
