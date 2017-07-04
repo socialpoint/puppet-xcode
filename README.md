@@ -1,17 +1,17 @@
 # xcode
 
-#### Table of Contents
+## Table of Contents
 
 1. [Overview](#overview)
-2. [Module Description - What the module does and why it is useful](#module-description)
-3. [Setup - The basics of getting started with xcode](#setup)
+1. [Module Description - What the module does and why it is useful](#module-description)
+1. [Setup - The basics of getting started with xcode](#setup)
     * [What xcode affects](#what-xcode-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with xcode](#beginning-with-xcode)
-4. [Usage - Configuration options and additional functionality](#usage)
-5. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
-5. [Limitations - OS compatibility, etc.](#limitations)
-6. [Development - Guide for contributing to the module](#development)
+1. [Usage - Configuration options and additional functionality](#usage)
+1. [Reference - An under-the-hood peek at what the module is doing and how](#reference)
+1. [Limitations - OS compatibility, etc.](#limitations)
+1. [Development - Guide for contributing to the module](#development)
 
 ## Overview
 
@@ -43,7 +43,7 @@ No special configuration needed
 
 To use the module simply the Xcode module, the invoke the 'xcode::instance' define with the versions of Xcode you'd like to have installed.
 
-```
+```puppet
 include xcode
 
 xcode::instance {
@@ -57,7 +57,7 @@ By default, this module will *not* accept the EULA for Xcode. However, if you pa
 
 If the value of 'eula' is not 'accept', then the EULA will be left as is.
 
-```
+```puppet
 include xcode
 
 xcode::instance {
@@ -70,7 +70,7 @@ xcode::instance {
 
 By default, this module will 'xcode-select' the newly installed Xcode. If you do not want this to happen set the parameter 'selected' to 'no'.
 
-```
+```puppet
 include xcode
 
 xcode::instance {
@@ -86,7 +86,8 @@ xcode::instance {
 A new facter 'xcode_versions' will list an array of hash that contain the installed Xcode versions. The hash is in the form of: `{build: <number>, version: <string>}`
 
 For example:
-```
+
+```puppet
 [
     {
         version: '7.1.1',
@@ -107,22 +108,30 @@ know what the ground rules for contributing are.
 
 ## Release Notes
 
-## Version 0.1.0
+### Version 1.0.2
+
+* Fixed Changelog
+
+### Version 1.0.1
+
+* Fixed README syntax
+
+### Version 1.0.0
+
+* Version matcher/extractor updated to match Xcode package published by Apple
+
+#### Breaking Changes
+
+    * xcode::instance param 'source_url' renamed to 'source'
+    * xcode::instance param 'selected' defaulted to 'no'
+
+### Version 0.1.0
 
 * Minor bug fixes
 * Support for Puppet 4.x
 
 (Thanks to @steveames for the changes)
 
-## Version 1.0.0
-
-```Important Changes
-* xcode::instance param 'source_url' renamed to 'source'
-* xcode::instance param 'selected' defaulted to 'no'
-```
-
-* Version matcher/extractor updated to match Xcode package published by Apple
-
-## Version 0.0.1
+### Version 0.0.1
 
 This is the initial release

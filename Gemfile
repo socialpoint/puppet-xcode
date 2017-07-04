@@ -20,6 +20,7 @@ group :development, :unit_tests do
   gem 'rspec-puppet-facts',        :require => false
   gem 'simplecov',                 :require => false
   gem 'simplecov-console',         :require => false
+  gem 'mdl',                       :require => false
 end
 
 group :system_tests do

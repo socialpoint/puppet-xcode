@@ -238,6 +238,7 @@ GEM
     json (1.8.6)
     json_pure (2.1.0)
     jwt (1.5.6)
+    kramdown (1.14.0)
     little-plugger (1.1.4)
     locale (2.1.2)
     logging (2.2.2)
@@ -250,6 +251,10 @@ GEM
       json
       stomp
       systemu
+    mdl (0.4.0)
+      kramdown (~> 1.12, >= 1.12.0)
+      mixlib-cli (~> 1.7, >= 1.7.0)
+      mixlib-config (~> 2.2, >= 2.2.1)
     memoist (0.15.0)
     metaclass (0.0.4)
     metadata-json-lint (1.2.2)
@@ -262,6 +267,8 @@ GEM
     mini_portile2 (2.1.0)
     minitar (0.5.4)
     minitest (5.10.2)
+    mixlib-cli (1.7.0)
+    mixlib-config (2.2.4)
     mocha (1.2.1)
       metaclass (~> 0.0.1)
     multi_json (1.12.1)
@@ -384,6 +391,7 @@ DEPENDENCIES
   facter (>= 1.7.0)
   json
   master_manipulator
+  mdl
   metadata-json-lint
   puppet (>= 3.3, < 4.0)
   puppet-blacksmith
