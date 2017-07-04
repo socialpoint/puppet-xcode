@@ -63,8 +63,8 @@ define xcode::instance(
     fail('You must include the xcode base class before trying to install any instances')
   }
 
-  validate_legacy(String, "validate_string", $source)
-  validate_legacy(String, "validate_string", $selected)
+  validate_legacy(String, 'validate_string', $source)
+  validate_legacy(String, 'validate_string', $selected)
 
   if $ensure == 'absent' {
     $_real_file_ensure = absent
