@@ -79,6 +79,7 @@ xcode::instance {
     source   => 'http://cache.mydomain.com/xcode/Xcode_7.1.1.dmg',
     selected => 'no',
 }
+```
 
 ## Reference
 
