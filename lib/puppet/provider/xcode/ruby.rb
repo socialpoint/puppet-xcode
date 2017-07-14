@@ -14,7 +14,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       metadata = /.*(Xcode_([0-9\.?]+){1,})\.dmg/.match source
       version = metadata[2]
     elsif source.end_with? '.xip'
-      metadata = /.*(Xcode_?([0-9\.?]+){1,})(_(beta[0-9]?))?\.xip/.match source
+      metadata = /.*(Xcode_?([0-9\.?]+){1,})(_(beta(_?[0-9]?)))?\.xip/.match source
       version = metadata[2]
       version = format('%s-%s', version, metadata[4]) unless metadata[4].nil?
     end
