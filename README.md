@@ -108,6 +108,10 @@ know what the ground rules for contributing are.
 
 ## Release Notes
 
+### Version 1.0.3
+
+* Fixed boolean logic with eula and selected
+
 ### Version 1.0.2
 
 * Fixed Changelog
