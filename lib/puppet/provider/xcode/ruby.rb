@@ -79,12 +79,12 @@ Puppet::Type.type(:xcode).provide(:ruby) do
       install_dir: install_dir
     }.merge(opts)
 
-    if opts[:eula].casecmp 'accept'
+    if !opts[:eula].casecmp 'accept'
       Puppet.debug 'Accepting EULA'
       accepteula install_dir
     end
 
-    if opts[:selected].casecmp 'yes'
+    if !opts[:selected].casecmp 'yes'
       Puppet.debug 'Selecting Xcode'
       xcselect install_dir
     end
