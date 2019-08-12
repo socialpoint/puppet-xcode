@@ -25,7 +25,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
     root = resource[:install_path] ? resource[:install_path] : '/Applications'
     version = extract_version resource[:source]
 
-    bundle = format('Xcode-v%s.app', version)
+    bundle = format('Xcode-%s.app', version)
     path = File.join(root, bundle)
 
     path
@@ -94,7 +94,8 @@ Puppet::Type.type(:xcode).provide(:ruby) do
 
   def self.installxip(source, install_dir)
     xiputil source
-    extract_dir = File.dirname(source)
+    #extract_dir = File.dirname(source)
+    extract_dir = "/var/root/Downloads"
 
     if Dir.exist? "#{extract_dir}/Xcode-beta.app"
       move "#{extract_dir}/Xcode-beta.app", install_dir

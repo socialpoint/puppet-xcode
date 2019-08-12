@@ -87,9 +87,9 @@ define xcode::instance(
       checksum_type => $checksum_type;
   }
 
-    if !defined(File['/opt']) {
+    if !defined(File['/private/tmp']) {
       file {
-        '/opt':
+        '/private/tmp':
           ensure => directory;
       }
     }
@@ -98,21 +98,21 @@ define xcode::instance(
     archive {
       $dmg:
         ensure        => $ensure,
-        path          => "/opt/${dmg}",
+        path          => "/private/tmp/${dmg}",
         source        => $source,
         username      => $username,
         password      => $password,
         provider      => ruby,
         checksum      => $checksum,
         checksum_type => $checksum_type,
-        require       => File['/opt'];
+        require       => File['/private/tmp'];
     }
 
     Xcode[$dmg] {
       require => Archive[$dmg]
     }
 
-    $_real_installer = "/opt/${dmg}"
+    $_real_installer = "/private/tmp/${dmg}"
   }
   else {
     $_real_installer = $source
