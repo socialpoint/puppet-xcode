@@ -5,7 +5,8 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   commands :hdiutil => '/usr/bin/hdiutil'
   commands :curl    => '/usr/bin/curl'
   commands :ditto   => '/usr/bin/ditto'
-  commands :xiputil => '/System/Library/CoreServices/Applications/Archive Utility.app/Contents/MacOS/Archive Utility'
+  #commands :xiputil => '/System/Library/CoreServices/Applications/Archive Utility.app/Contents/MacOS/Archive Utility'
+  commands :xiputil => '/usr/bin/xip'
 
   MANIFEST_DIR = '/var/db'.freeze
 
@@ -22,7 +23,8 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def self.install_dir(resource)
-    root = resource[:install_path] ? resource[:install_path] : '/Applications'
+    #root = resource[:install_path] ? resource[:install_path] : '/Applications'
+    root = '/Applications'
     version = extract_version resource[:source]
 
     bundle = format('Xcode-%s.app', version)
@@ -93,9 +95,8 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def self.installxip(source, install_dir)
-    xiputil source
-    #extract_dir = File.dirname(source)
-    extract_dir = "/var/root/Downloads"
+    xiputil '-x', source
+    extract_dir = File.dirname(source)
 
     if Dir.exist? "#{extract_dir}/Xcode-beta.app"
       move "#{extract_dir}/Xcode-beta.app", install_dir
