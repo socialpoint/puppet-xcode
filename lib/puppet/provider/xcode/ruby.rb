@@ -23,8 +23,7 @@ Puppet::Type.type(:xcode).provide(:ruby) do
   end
 
   def self.install_dir(resource)
-    #root = resource[:install_path] ? resource[:install_path] : '/Applications'
-    root = '/Applications'
+    root = resource[:install_path] ? resource[:install_path] : '/Applications'
     version = extract_version resource[:source]
 
     bundle = format('Xcode-%s.app', version)
